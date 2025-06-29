@@ -4,36 +4,63 @@ const MutualFund = require('../models/MutualFund');
 const auth = require('../middleware/auth');
 
 // Save mutual funds (bulk insert)
+// router.post('/', auth, async (req, res) => {
+//   try {
+//     const funds = req.body;
+//     funds.userId = req.user.id; // Add userId to each fund
+
+//     console.log(funds)
+//     if (!Array.isArray(funds)) {
+//       return res.status(400).json({ msg: 'Expected an array of mutual funds' });
+//     }
+
+//     // Use upsert to avoid duplicates based on schemeCode
+//     const bulkOps = funds.map(fund => ({
+//       updateOne: {
+//         filter: { schemeCode: fund.schemeCode },
+//         update: { $set: fund },
+//         upsert: true
+//       }
+//     }));
+
+//     await MutualFund.bulkWrite(bulkOps);
+//     res.json({ msg: 'Mutual funds saved successfully' });
+
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ msg: 'Server error' });
+//   }
+// });
+
 router.post('/', auth, async (req, res) => {
   try {
-    const funds = req.body;
+    const fund = req.body;
 
-    if (!Array.isArray(funds)) {
-      return res.status(400).json({ msg: 'Expected an array of mutual funds' });
+    if (!fund || typeof fund !== 'object') {
+      return res.status(400).json({ msg: 'Expected a mutual fund object' });
     }
 
-    // Use upsert to avoid duplicates based on schemeCode
-    const bulkOps = funds.map(fund => ({
-      updateOne: {
-        filter: { schemeCode: fund.schemeCode },
-        update: { $set: fund },
-        upsert: true
-      }
-    }));
+    fund.userId = req.user.id; // attach logged in user's ID
 
-    await MutualFund.bulkWrite(bulkOps);
-    res.json({ msg: 'Mutual funds saved successfully' });
+    // Avoid duplicate for the same user and fund
+    await MutualFund.updateOne(
+      { schemeCode: fund.schemeCode, userId: req.user.id },
+      { $set: fund },
+      { upsert: true }
+    );
 
+    res.json({ msg: 'Mutual fund saved successfully' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ msg: 'Server error' });
   }
 });
 
+
 // Get all mutual funds
 router.get('/', auth ,async (req, res) => {
   try {
-    const funds = await MutualFund.find().sort({ schemeCode: 1 });
+    const funds = await MutualFund.find({userId: req.user.id}).sort({ schemeCode: 1 });
     res.json(funds);
   } catch (err) {
     console.error(err);

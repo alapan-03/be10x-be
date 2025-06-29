@@ -4,7 +4,11 @@ const MutualFundSchema = new mongoose.Schema({
   schemeCode: {
     type: Number,
     required: true,
-    unique: true
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   },
   schemeName: {
     type: String,
