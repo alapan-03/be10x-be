@@ -3,35 +3,7 @@ const router = express.Router();
 const MutualFund = require('../models/MutualFund');
 const auth = require('../middleware/auth');
 
-// Save mutual funds (bulk insert)
-// router.post('/', auth, async (req, res) => {
-//   try {
-//     const funds = req.body;
-//     funds.userId = req.user.id; // Add userId to each fund
-
-//     console.log(funds)
-//     if (!Array.isArray(funds)) {
-//       return res.status(400).json({ msg: 'Expected an array of mutual funds' });
-//     }
-
-//     // Use upsert to avoid duplicates based on schemeCode
-//     const bulkOps = funds.map(fund => ({
-//       updateOne: {
-//         filter: { schemeCode: fund.schemeCode },
-//         update: { $set: fund },
-//         upsert: true
-//       }
-//     }));
-
-//     await MutualFund.bulkWrite(bulkOps);
-//     res.json({ msg: 'Mutual funds saved successfully' });
-
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ msg: 'Server error' });
-//   }
-// });
-
+// save mutiual fund
 router.post('/', auth, async (req, res) => {
   try {
     const fund = req.body;

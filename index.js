@@ -1,4 +1,3 @@
-// T0W8ttKwZMe9QcQ1
 
 const express = require('express');
 const connectDB = require('./jwt-auth/config/db');
