@@ -1,6 +1,6 @@
 
 const express = require('express');
-const connectDB = require('./jwt-auth/config/db');
+const connectDB = require('./backend/config/db');
 const dotenv = require('dotenv');
 const cors = require('cors');
 dotenv.config();
@@ -19,8 +19,8 @@ app.use(express.json());
 connectDB();
 
 // Routes
-app.use('/api/auth', require('./jwt-auth/routes/auth'));
-app.use('/api/mutualfunds', require('./jwt-auth/routes/mutualfund'));
+app.use('/api/auth', require('./backend/routes/auth'));
+app.use('/api/mutualfunds', require('./backend/routes/mutualfund'));
 
 
 const PORT = process.env.PORT || 5000;
